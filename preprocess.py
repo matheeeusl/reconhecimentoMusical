@@ -7,10 +7,10 @@ DATASET_PATH = "./"
 JSON_PATH = "data.json"
 
 SAMPLE_RATE = 22050
-DURATION = 0.1 #measured in sec. CHECK THIS MAN.
+DURATION = 0.1 #measured in sec.
 SAMPLES_PER_TRACK = SAMPLE_RATE * DURATION
 
-def save_mfcc(dataset_path, json_path, n_mfcc=13, n_fft=2048, hop_length=512, num_segments=5):
+def save_mfcc(dataset_path, json_path, n_mfcc= 40, n_fft=2048, hop_length=256, num_segments=5):
   
   # dictionary to store data, mfcc training inputs, labels are the target we expect.
   # data = {

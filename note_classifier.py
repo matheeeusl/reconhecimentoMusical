@@ -54,7 +54,7 @@ if __name__ == "__main__":
 
   model = keras.Sequential([
     # input layer
-    keras.layers.Flatten(input_shape=(1, 13)),
+    keras.layers.Flatten(input_shape=(1, 40)),
     #1st hidden layer, relu = rectified linear unit. Relu - Better convergence, reduced likelihood of vanishing gradient
     keras.layers.Dense(1024, activation="relu",  kernel_regularizer=keras.regularizers.l2(0.001)),
     keras.layers.Dropout(0.3),
