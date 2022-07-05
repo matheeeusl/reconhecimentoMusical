@@ -58,28 +58,28 @@ if __name__ == "__main__":
     #1st hidden layer, relu = rectified linear unit. Relu - Better convergence, reduced likelihood of vanishing gradient
     keras.layers.Dense(1024, activation="relu",  kernel_regularizer=keras.regularizers.l2(0.001)),
     keras.layers.Dropout(0.3),
+    #2st hidden layer
     keras.layers.Dense(512, activation="relu",  kernel_regularizer=keras.regularizers.l2(0.001)),
     keras.layers.Dropout(0.3),
-    #2st hidden layer
+    #3st hidden layer
     keras.layers.Dense(256, activation="relu", kernel_regularizer=keras.regularizers.l2(0.001)),
     keras.layers.Dropout(0.3),
-    
-    #3st hidden layer
+    #4st hidden layer
     keras.layers.Dense(64, activation="relu", kernel_regularizer=keras.regularizers.l2(0.001)),
-    keras.layers.Dropout(0.3),
-    
-    #output layer, 6 neurons because we have 6 outputs ("C4", "C5", "D4", "D5", "E4", "E5"), softmax its a activation function, that normalize the values for us.
+    keras.layers.Dropout(0.3),  
+    # output layer, 12 neurons because we have 6 outputs ("C4", "C5", "D4", "D5", "E4", "E5")
+    # softmax its a activation function, that normalize the values for us.
     keras.layers.Dense(12, activation="softmax"),
     
   ])
+  
   #compile network
-  #sparse_categorical_crossentropy (0.64)
-
   optimiser = keras.optimizers.Adam(learning_rate=0.0001)
   model.compile(optimizer=optimiser,
                 loss="sparse_categorical_crossentropy",
                 metrics=["accuracy"])
   model.summary()
+  
   #train network
   history = model.fit(inputs_train, targets_train,
             validation_data=(inputs_test, targets_test),

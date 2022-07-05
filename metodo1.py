@@ -46,6 +46,8 @@ def average_pitch(pitch):
 # Referencia: 220 - 233.08 Hz + 246.94
 # 220 - 233.08 = 13.08. /2 = 6.54
 # 246.94 - 233.08 = 13.86. /2 = 6.93
+# ValorMínimo = F_{atual} - \left| \frac{(F_{ant} - F_{atual})}{2} \right|
+# ValorMáximo = \left| \frac{(F_{prox} - F_{atual})}{2} \right| + F_{atual}
 def detect_note(pitch):
     # Bb3 - 233.08 Hz |- 6.54| |+ 6.93|
     if pitch > 226.54 and pitch < 240.01:
