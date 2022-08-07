@@ -5,7 +5,7 @@ import tensorflow.keras as keras
 import matplotlib.pyplot as plt
 
 
-DATASET_PATH = "./Notas/data.json"
+DATASET_PATH = "data.json"
 
 def load_data(dataset_path):
   with open(dataset_path, "r") as fp:
@@ -25,19 +25,19 @@ def plot_history(history):
   fig, axs = plt.subplots(2)
   
   # create the accuracy subplots
-  axs[0].plot(history.history["acc"], label="train accuracy")
-  axs[0].plot(history.history["val_acc"], label="test accuracy")
-  axs[0].set_ylabel("Accuracy")
+  axs[0].plot(history.history["acc"], label="Treino (acurácia)")
+  axs[0].plot(history.history["val_acc"], label="Teste (acurácia)")
+  axs[0].set_ylabel("Acurácia")
   axs[0].legend(loc="lower right")
-  axs[0].set_title("Accuracy eval")
+  axs[0].set_title("Acurácia")
   
    # create the error subplots
-  axs[1].plot(history.history["loss"], label="train error")
-  axs[1].plot(history.history["val_loss"], label="test error")
-  axs[1].set_ylabel("Error")
+  axs[1].plot(history.history["loss"], label="Treino (erro)")
+  axs[1].plot(history.history["val_loss"], label="Teste (erro)")
+  axs[1].set_ylabel("Erro")
   axs[1].set_xlabel("Epoch")
   axs[1].legend(loc="upper right")
-  axs[1].set_title("Error eval")
+  axs[1].set_title("Erro")
   
   plt.show()
   
@@ -84,7 +84,7 @@ if __name__ == "__main__":
   history = model.fit(inputs_train, targets_train,
             validation_data=(inputs_test, targets_test),
             batch_size=32,
-            epochs=100)
+            epochs=1000)
   
-  #plot the accuracy and eror over the epochs
+  #plot the accuracy and error over the epochs
   plot_history(history)
