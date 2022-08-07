@@ -10,22 +10,13 @@ SAMPLE_RATE = 22050
 DURATION = 0.1 #measured in sec.
 SAMPLES_PER_TRACK = SAMPLE_RATE * DURATION
 
-def save_mfcc(dataset_path, json_path, n_mfcc= 40, n_fft=2048, hop_length=256, num_segments=5):
-  
-  # dictionary to store data, mfcc training inputs, labels are the target we expect.
-  # data = {
-  #   "mapping": ["1t", "2t"],
-  #   "mfcc": [[...], [...], [...]],
-  #   "labels": [0, 0, 1]
-  # }
-  
+def save_mfcc(dataset_path, json_path, n_mfcc= 40, n_fft=2048, hop_length=512, num_segments=5):
   data = {
     "mapping": [],
     "mfcc": [],
     "labels": []
   }
   num_samples_per_segment = int(SAMPLES_PER_TRACK / num_segments)
-  expected_num_mfcc_vectors_per_segment = math.ceil(num_samples_per_segment / hop_length)
   
   #loop the folders.
   for i, (dirpath, dirnames, filenames) in enumerate(os.walk(dataset_path)):
@@ -34,7 +25,7 @@ def save_mfcc(dataset_path, json_path, n_mfcc= 40, n_fft=2048, hop_length=256, n
     if dirpath is not dataset_path and "MP3" not in dirpath :
       
       #save the semantic label
-      dirpath_components = dirpath.split("/") #./dos1t => [".","dos1t"]
+      dirpath_components = dirpath.split("/")
       semantic_label = dirpath_components[-1]
       data["mapping"].append(semantic_label)
       print("\nProcessing {}".format(semantic_label))
@@ -50,13 +41,9 @@ def save_mfcc(dataset_path, json_path, n_mfcc= 40, n_fft=2048, hop_length=256, n
           start_sample = num_samples_per_segment * s # s=0 -> 0
           finish_sample = start_sample + num_samples_per_segment #s=0 -> num_samples_per_segment
           
-          
           mfcc = librosa.feature.mfcc(y=signal[start_sample:finish_sample], sr=sr, n_fft=n_fft, n_mfcc=n_mfcc,hop_length=hop_length)
           mfcc = mfcc.T
-          
-          # print("\nMfcc Leng {} == expected {}".format(len(mfcc), expected_num_mfcc_vectors_per_segment))
-          #store mfcc for segmentif it has the expected length
-          # if len(mfcc) == expected_num_mfcc_vectors_per_segment:
+
           data["mfcc"].append(mfcc.tolist())
           data["labels"].append(i-1)
           print("{}, segment: {}".format(file_path, s+1))

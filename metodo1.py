@@ -4,21 +4,21 @@
 #Imports
 import parselmouth
 import numpy as np
-from detect_sound import WAVE_OUTPUT_FILENAME, detect_audio
-
+import os
 
 # Variavel Global
-AFINACAO_RANGE = 2
+AFINACAO_RANGE = 5
 # full, short, hard
 LOG_TYPE = "short"
 
+DATASET_PATH = "./"
 
-detect_audio()
+# detect_audio()
 
 # Pega a música:
 # snd = parselmouth.Sound("./Escala Cromatica - video youtube/E4.mp3")
 #   snd = parselmouth.Sound("./Variações Dó/Dó 4t/J Arban Pag 12 N.7 C3 1.mp3")
-snd = parselmouth.Sound(WAVE_OUTPUT_FILENAME)
+# snd = parselmouth.Sound(WAVE_OUTPUT_FILENAME)
 
 # Pega a média de tons dentro da música
 def average_pitch(pitch):
@@ -51,49 +51,70 @@ def average_pitch(pitch):
 def detect_note(pitch):
     # Bb3 - 233.08 Hz |- 6.54| |+ 6.93|
     if pitch > 226.54 and pitch < 240.01:
-        # Quanto mais perto de 233.08, mais afinado.
-        afinacao = pitch - 233.08
-        if abs(afinacao) > AFINACAO_RANGE:
-            return "Nota Real: Bb3. Trompete: C4 - Desafinado - {}".format(afinacao)
-        return "Nota Real: Bb3. Trompete: C4 - Afinado"
+        return "C4"
 
     # Bb4 - 466.16 Hz |- 13.08| |+ 13.86|
     if pitch > 453.08 and pitch < 480.02:
-        afinacao = pitch - 466.16
-        if abs(afinacao) > AFINACAO_RANGE:
-            return "Nota Real: Bb4. Trompete: C5 - Desafinado - {}".format(afinacao)
-        return "Nota Real: Bb4. Trompete: C5 - Afinado"
-
+        return "C5"
+    
     # C4 - 261.63 Hz |- 7.345| |+ 7.775|
     if pitch > 254.285 and pitch < 269.405:
-        afinacao = pitch - 261.63
-        if abs(afinacao) > AFINACAO_RANGE:        
-            return "Nota Real: C4. Trompete: D4 - Desafinado : {}".format(afinacao)
-        return "Nota Real: C4. Trompete: D4 - Afinado"
+        # afinacao = pitch - 261.63
+        return "D4"
 
     # C5 - 523.25 Hz |- 14.685| |+ 15.56|
     if pitch > 508.565 and pitch < 538.81:
-        afinacao = pitch - 523.25
-        if abs(afinacao) > AFINACAO_RANGE:        
-            return "Nota Real: C5. Trompete: D5 - Desafinado : {}".format(afinacao)
-        return "Nota Real: C5. Trompete: D5 - Afinado"
+        return "D5"
 
     # D4 - 293.66 Hz |- 8.24| |+ 8.735| 
     if pitch > 285.42 and pitch < 302.395:
-        afinacao = pitch - 293.66
-        if abs(afinacao) > AFINACAO_RANGE:        
-            return "Nota Real: D4. Trompete: E4 - Desafinado : {}".format(afinacao)
-        return "Nota Real: D4. Trompete: E4 - Afinado"
+        return "E4"
 
     # D5 - 587.33 Hz |- 16.48| |+ 17.46|
     if pitch > 570.85 and pitch < 604.79:
-        afinacao = pitch - 587.33
-        if abs(afinacao) > AFINACAO_RANGE:        
-            return "Nota Real: D5. Trompete: E5 - Desafinado: {}".format(afinacao)
-        return "Nota Real: D5. Trompete: E5 - Afinado"
-    return "Nota fora do escopo"
+        return "E5"
+    
+    # return "Nota fora do escopo"
+    return "-"
       
-pitch = snd.to_pitch()
+# pitch = snd.to_pitch()
 
-average = average_pitch(pitch)
-print("pitch: {}".format(detect_note(average)))
+# average = average_pitch(pitch)
+# print("pitch: {}".format(detect_note(average)))
+
+acuraciaIndividual = {
+    "C4": {"length": 0, "notascorretas": 0, "acuracia" : 0},
+    "C5": {"length": 0, "notascorretas": 0, "acuracia" : 0},
+    "D4": {"length": 0, "notascorretas": 0, "acuracia" : 0},
+    "D5": {"length": 0, "notascorretas": 0, "acuracia" : 0},
+    "E4": {"length": 0, "notascorretas": 0, "acuracia" : 0},
+    "E5": {"length": 0, "notascorretas": 0, "acuracia" : 0}
+};
+
+for dirpath, dirnames, filenames in os.walk(DATASET_PATH):
+  if dirpath is not DATASET_PATH and "MP3" not in dirpath:
+    dirpath_components = dirpath.split('/')
+    label = dirpath_components[-1]
+    for filename in filenames:
+        snd = parselmouth.Sound(dirpath+'/'+filename)
+        pitch = snd.to_pitch()
+        average = average_pitch(pitch)
+        detected = detect_note(average)
+        correta = 1 if detected == label else 0
+        acuraciaIndividual[label]["length"] = acuraciaIndividual[label]["length"] + 1
+        acuraciaIndividual[label]["notascorretas"] = acuraciaIndividual[label]["notascorretas"] + correta
+        print("pitch: {}".format(detect_note(average)))
+
+# Equação 3
+acuraciaIndividual["C4"]["acuracia"] = (acuraciaIndividual["C4"]["notascorretas"] * 100)/acuraciaIndividual["C4"]["length"]
+acuraciaIndividual["C5"]["acuracia"] = (acuraciaIndividual["C5"]["notascorretas"] * 100)/acuraciaIndividual["C5"]["length"]
+acuraciaIndividual["D4"]["acuracia"] = (acuraciaIndividual["D4"]["notascorretas"] * 100)/acuraciaIndividual["D4"]["length"]
+acuraciaIndividual["D5"]["acuracia"] = (acuraciaIndividual["D5"]["notascorretas"] * 100)/acuraciaIndividual["D5"]["length"]
+acuraciaIndividual["E4"]["acuracia"] = (acuraciaIndividual["E4"]["notascorretas"] * 100)/acuraciaIndividual["E4"]["length"]
+acuraciaIndividual["E5"]["acuracia"] = (acuraciaIndividual["E5"]["notascorretas"] * 100)/acuraciaIndividual["E5"]["length"]
+    
+print("acuracia: {}".format(acuraciaIndividual))
+
+# Equação 4
+somaAcuracias = acuraciaIndividual["C4"]["acuracia"] + acuraciaIndividual["C5"]["acuracia"] + acuraciaIndividual["D4"]["acuracia"] + acuraciaIndividual["D5"]["acuracia"] + acuraciaIndividual["E4"]["acuracia"] + acuraciaIndividual["E5"]["acuracia"]
+print("total: {}".format(somaAcuracias/6))
